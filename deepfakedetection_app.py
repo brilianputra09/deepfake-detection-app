@@ -1,4 +1,8 @@
 import streamlit as st
+
+# SET PAGE CONFIG HARUS DI AWAL
+st.set_page_config(page_title="Real vs Fake Eye Detection", layout="centered")
+
 import cv2
 import numpy as np
 from PIL import Image
@@ -13,7 +17,7 @@ from utils.preprocess import preprocess_efficientnet
 # KONFIGURASI MODEL
 # =====================
 MODEL_PATH = "Final_EfficientNetB0_Model.h5"
-HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-EfficientNet-Model/blob/main/Final_EfficientNetB0_Model.h5"
+HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-EfficientNet-Model/resolve/main/Final_EfficientNetB0_Model.h5"
 
 # =====================
 # LOAD MODEL
@@ -22,18 +26,13 @@ HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-Efficie
 def load_model():
     if not os.path.exists(MODEL_PATH):
         st.write("Mengunduh model dari Hugging Face...")
-        try:
-            r = requests.get(HF_MODEL_URL, stream=True)
-            r.raise_for_status()
-            with open(MODEL_PATH, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            st.success("✅ Model berhasil diunduh")
-        except Exception as e:
-            st.error(f"❌ Gagal mengunduh model: {e}")
-            return None
+        r = requests.get(HF_MODEL_URL, stream=True)
+        r.raise_for_status()
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+        st.success("✅ Model berhasil diunduh")
 
-    # Load model
     model = tf.keras.models.load_model(MODEL_PATH, compile=False)
     return model
 
@@ -44,7 +43,6 @@ CLASS_NAMES = ["Fake", "Real"]
 # =====================
 # UI
 # =====================
-st.set_page_config(page_title="Real vs Fake Eye Detection", layout="centered")
 st.title("🔍 Deteksi Gambar Real / Fake")
 st.write("Berdasarkan **area mata** menggunakan EfficientNet + MediaPipe")
 
