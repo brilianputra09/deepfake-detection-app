@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 import tensorflow as tf
 import os
-import gdown
+import requests
 
 from utils.mediapipe_eye_crop import crop_eyes_mediapipe
 from utils.preprocess import preprocess_efficientnet
@@ -12,9 +12,8 @@ from utils.preprocess import preprocess_efficientnet
 # =====================
 # KONFIGURASI MODEL
 # =====================
-FILE_ID = "1Sz_11M06ztbozdzqhW4JovYS19KkZX8P" 
 MODEL_PATH = "Final_EfficientNetB0_Model.h5"
-URL = f"https://drive.google.com/uc?id={FILE_ID}"
+HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-EfficientNet-Model/blob/main/Final_EfficientNetB0_Model.h5"
 
 # =====================
 # LOAD MODEL
@@ -22,14 +21,24 @@ URL = f"https://drive.google.com/uc?id={FILE_ID}"
 @st.cache_resource
 def load_model():
     if not os.path.exists(MODEL_PATH):
-        st.write("Downloading model from Google Drive...")
-        gdown.download(URL, MODEL_PATH, quiet=False)
+        st.write("Mengunduh model dari Hugging Face...")
+        try:
+            r = requests.get(HF_MODEL_URL, stream=True)
+            r.raise_for_status()
+            with open(MODEL_PATH, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+            st.success("✅ Model berhasil diunduh")
+        except Exception as e:
+            st.error(f"❌ Gagal mengunduh model: {e}")
+            return None
 
     # Load model
     model = tf.keras.models.load_model(MODEL_PATH, compile=False)
     return model
 
 model = load_model()
+
 CLASS_NAMES = ["Fake", "Real"]
 
 # =====================
