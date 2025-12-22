@@ -16,8 +16,8 @@ from utils.preprocess import preprocess_efficientnet
 # =====================
 # KONFIGURASI MODEL
 # =====================
-MODEL_PATH = "Final_EfficientNetB0_Model.h5"
-HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-EfficientNet-Model/resolve/main/Final_EfficientNetB0_Model.h5"
+MODEL_PATH = "Final_EfficientNetB0_Model_RMSProp.h5"
+HF_MODEL_URL = "https://huggingface.co/brilianputra09/Deepfake-Detection-EfficientNet-Model/resolve/main/Final_EfficientNetB0_Model_RMSProp.h5"
 
 # =====================
 # LOAD MODEL
