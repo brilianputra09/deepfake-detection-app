@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real vs Fake Eye Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: none;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .img-preview {
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+        .crop-preview {
+            max-height: 150px;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+        .result-box {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card main-card">
+                <div class="header-bg">
+                    <h1><i class="fas fa-eye"></i> Deteksi Real vs Fake</h1>
+                    <p class="mb-0">Analisis Deepfake Berdasarkan Area Mata menggunakan EfficientNet</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <form action="/" method="post" enctype="multipart/form-data" class="mb-4">
+                        <div class="mb-3">
+                            <label for="fileInput" class="form-label fw-bold">Upload Gambar Wajah (JPG/PNG)</label>
+                            <input class="form-control form-control-lg" type="file" id="fileInput" name="file" accept=".jpg, .jpeg, .png" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> Analisis Gambar
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if error %}
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>{{ error }}</div>
+                    </div>
+                    {% endif %}
+
+                    {% if prediction %}
+                    <hr class="my-4">
+                    <div class="row result-box">
+                        <div class="col-md-12 text-center mb-3">
+                            <h3 class="fw-bold">Hasil Deteksi</h3>
+                        </div>
+                        
+                        <div class="col-md-6 text-center mb-3">
+                            <p class="text-muted small">Gambar Asli</p>
+                            <img src="{{ original_image }}" class="img-fluid img-preview" alt="Original Image">
+                        </div>
+
+                        <div class="col-md-6 text-center mb-3">
+                            <p class="text-muted small">Area Mata (Cropped)</p>
+                            <img src="{{ cropped_image }}" class="img-fluid crop-preview" alt="Cropped Eye">
+                            
+                            <div class="mt-3">
+                                <h2 class="display-6 fw-bold text-{{ result_color }}">
+                                    {{ prediction }}
+                                </h2>
+                                <p class="mb-1">Probabilitas:</p>
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar bg-{{ result_color }}" role="progressbar" 
+                                         style="width: {{ raw_prob * 100 }}%;" 
+                                         aria-valuenow="{{ raw_prob * 100 }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ probability }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer text-center text-muted bg-light">
+                    <small>&copy; 2024 Deepfake Detection System</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
